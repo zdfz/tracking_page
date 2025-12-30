@@ -1,0 +1,5 @@
+{
+  "name": "Shipment Extractor",
+  "description": "A high-performance tool for extracting and displaying Starlinks shipment details by Saudi mobile number. Built with React and optimized for internal operations.",
+  "requestFramePermissions": []
+}
