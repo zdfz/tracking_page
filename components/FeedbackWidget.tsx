@@ -4,7 +4,7 @@ import React from 'react';
 const FeedbackWidget: React.FC = () => {
     return (
         <a
-            href="https://botview.ikb.sa/csat-all-megjrq4"
+            href="https://api.whatsapp.com/send/?phone=9668003044433&text&type=phone_number&app_absent=0"
             target="_blank"
             rel="noopener noreferrer"
             className="fixed right-0 top-1/2 -translate-y-1/2 z-50 transform origin-right translate-x-[calc(100%-40px)] hover:translate-x-0 transition-transform duration-300 ease-in-out group"
@@ -47,7 +47,7 @@ const FeedbackWidgetVertical: React.FC = () => {
         <>
             {/* Desktop Version: Vertical Tab on Right */}
             <a
-                href="https://botview.ikb.sa/csat-all-megjrq4"
+                href="https://api.whatsapp.com/send/?phone=9668003044433&text&type=phone_number&app_absent=0"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden sm:flex fixed right-0 top-1/2 -translate-y-1/2 z-50 items-center justify-center bg-[#006F4A] text-white rounded-l-lg shadow-xl cursor-pointer hover:bg-[#00583B] transition-colors py-4 px-1"
@@ -71,7 +71,7 @@ const FeedbackWidgetVertical: React.FC = () => {
 
             {/* Mobile Version: Floating Rounded Button Bottom-Right */}
             <a
-                href="https://botview.ikb.sa/csat-all-megjrq4"
+                href="https://api.whatsapp.com/send/?phone=9668003044433&text&type=phone_number&app_absent=0"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="sm:hidden fixed bottom-6 right-6 z-50 flex items-center justify-center gap-2 bg-[#006F4A] text-white rounded-full shadow-2xl cursor-pointer hover:bg-[#00583B] transition-transform active:scale-95 px-5 py-3 border border-[#00583B]/20"
