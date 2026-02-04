@@ -92,8 +92,8 @@ const AppContent: React.FC = () => {
               <div className="relative">
                 <input
                   type="text"
-                  className="block w-full h-[52px] sm:h-[64px] px-5 text-xl sm:text-2xl font-black text-[#064e3b] bg-gray-50/50 border-2 border-gray-200 focus:border-[#115e59] focus:bg-white rounded-xl sm:rounded-2xl transition-all outline-none placeholder:text-gray-200"
-                  placeholder={t('placeholder')}
+                  className={`block w-full h-[52px] sm:h-[64px] px-5 text-xl sm:text-2xl font-black text-[#064e3b] bg-gray-50/50 border-2 border-gray-200 focus:border-[#115e59] focus:bg-white rounded-xl sm:rounded-2xl transition-all outline-none placeholder:text-gray-300 ${isRTL ? 'text-right placeholder:text-right' : 'text-left'}`}
+                  placeholder="S0005747286"
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
                   disabled={isLoading}
