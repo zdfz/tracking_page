@@ -3,10 +3,11 @@ import React, { useState, useCallback } from 'react';
 import { queryStarlinksAPI, fetchShipmentHistory, extractTimeline } from './services/starlinksService';
 import { Shipment } from './types';
 import ShipmentCard from './components/ShipmentCard';
-
 import FeedbackWidget from './components/FeedbackWidget';
+import { LanguageProvider, LanguageToggle, useLanguage } from './i18n';
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { t, isRTL } = useLanguage();
   const [trackingNumber, setTrackingNumber] = useState<string>('');
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -21,17 +22,17 @@ const App: React.FC = () => {
 
     const trimmedInput = trackingNumber.trim();
     if (!trimmedInput) {
-      setError("Please enter a tracking number");
+      setError(t('errorEmpty'));
       return;
     }
 
     if (trimmedInput.length < 3) {
-      setError("Tracking number is too short. Please enter a valid code.");
+      setError(t('errorTooShort'));
       return;
     }
 
     if (trimmedInput.length > 25) {
-      setError("The tracking number entered is unusually long. Please check for errors.");
+      setError(t('errorTooLong'));
       return;
     }
 
@@ -58,45 +59,47 @@ const App: React.FC = () => {
           );
           setShipments(enhancedShipments);
         } else {
-          setError(`Shipment not found for ${trimmedInput}. Please check the tracking number and try again.`);
+          setError(t('errorNotFound', { trackingNumber: trimmedInput }));
         }
       } else {
-        setError(result.error || "An unexpected error occurred. Please try again later.");
+        setError(result.error || t('errorUnexpected'));
       }
     } catch (err) {
-      setError("Network error");
+      setError(t('networkError'));
     } finally {
       setIsLoading(false);
     }
-  }, [trackingNumber]);
+  }, [trackingNumber, t]);
 
   return (
     <div className="min-h-screen bg-white relative">
       <FeedbackWidget />
 
-      {/* Top Header with Logo */}
+      {/* Top Header with Logo and Language Toggle */}
       <header className="border-b border-gray-100 py-4 mb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
           <img src="/logo.png" alt="Starlinks Logo" className="h-12 w-auto" />
+          <LanguageToggle />
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Search Input Area - Responsive Stacked on Mobile */}
         <div className="max-w-3xl mx-auto mb-12 sm:mb-20">
-          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-4 group">
+          <form onSubmit={handleSearch} className={`flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-4 group ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
             <div className="flex-grow group-focus-within:translate-y-[-2px] transition-transform duration-300">
-              <label className="block text-[10px] font-black text-[#115e59] uppercase tracking-widest   mb-1.5 ml-1 opacity-60">Enter Tracking Code</label>
+              <label className={`block text-[10px] font-black text-[#115e59] uppercase tracking-widest mb-1.5 ${isRTL ? 'mr-1 text-right' : 'ml-1'} opacity-60`}>{t('enterTrackingCode')}</label>
               <div className="relative">
                 <input
                   type="text"
                   className="block w-full h-[52px] sm:h-[64px] px-5 text-xl sm:text-2xl font-black text-[#064e3b] bg-gray-50/50 border-2 border-gray-200 focus:border-[#115e59] focus:bg-white rounded-xl sm:rounded-2xl transition-all outline-none placeholder:text-gray-200"
-                  placeholder="e.g. S0005747286"
+                  placeholder={t('placeholder')}
                   value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
                   disabled={isLoading}
+                  dir="ltr"
                 />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-200 pointer-events-none hidden sm:block">
+                <div className={`absolute ${isRTL ? 'left-4' : 'right-4'} top-1/2 -translate-y-1/2 text-gray-200 pointer-events-none hidden sm:block`}>
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 15l-2-2m0 0l-2-2m2 2l-2 2m2-2l2-2M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
               </div>
@@ -113,7 +116,7 @@ const App: React.FC = () => {
                   <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                  <span>Search</span>
+                  <span>{t('search')}</span>
                 </>
               )}
             </button>
@@ -127,7 +130,7 @@ const App: React.FC = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#115e59] opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#115e59]"></span>
                 </span>
-                Extracting Tracking Data...
+                {t('loading')}
               </div>
             )}
             {error && (
@@ -163,14 +166,22 @@ const App: React.FC = () => {
                 </svg>
               </div>
             </div>
-            <h3 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">Ready to Track?</h3>
+            <h3 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">{t('readyToTrack')}</h3>
             <p className="text-gray-400 font-bold text-sm leading-relaxed">
-              Enter a valid Starlinks tracking number above to see the real-time journey of your shipment.
+              {t('readyToTrackDesc')}
             </p>
           </div>
         )}
       </div>
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 };
 

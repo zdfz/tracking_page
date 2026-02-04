@@ -1,13 +1,14 @@
 
 import React, { useState } from 'react';
 import { Shipment } from '../types';
-import { FIELD_MAPPING, CONSIGNEE_FIELDS, SHIPPER_FIELDS, PARCEL_FIELDS, TIMELINE_LABELS } from '../constants';
+import { useLanguage } from '../i18n';
 
 interface ShipmentCardProps {
   shipment: Shipment;
 }
 
 const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
+  const { t, isRTL } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const getVal = (obj: any, key: string) => {
@@ -38,27 +39,27 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
     const arabicPart = hasArabic ? comment.match(/[\u0600-\u06FF].+/)?.[0] : null;
 
     // Technical Pickup Mappings
-    if (c.includes('out_for_pickup')) return 'Parcel is on its way to be picked up';
-    if (c.includes('not_picked_up')) return 'Pickup attempt unsuccessful';
-    if (c.includes('pickup_assigned')) return 'Courier assigned for pickup';
+    if (c.includes('out_for_pickup')) return t('statusOutForPickup');
+    if (c.includes('not_picked_up')) return t('statusPickupFailed');
+    if (c.includes('pickup_assigned')) return t('statusCourierAssigned');
 
-    if (c.includes('pickup_completed')) return 'Pickup Succefully completed at our hub';
-    if (c.includes('inscan_at_hub')) return 'Parcel received at hub';
-    if (c.includes('intransit')) return 'Parcel in transit to sorting center';
-    if (c.includes('reached') && c.includes('hub')) return 'Parcel arrived at hub';
-    if (c.includes('lost')) return 'Shipment declared lost';
-    if (c.includes('delivered')) return 'Shipment successfully delivered';
-    if (c.includes('accept')) return 'Shipment outgoing for delivery';
-    if (c.includes('rto')) return 'Shipment Returned to Sender';
+    if (c.includes('pickup_completed')) return t('statusPickupCompleted');
+    if (c.includes('inscan_at_hub')) return t('statusAtHub');
+    if (c.includes('intransit')) return t('statusInTransit');
+    if (c.includes('reached') && c.includes('hub')) return t('statusArrivedHub');
+    if (c.includes('lost')) return t('statusLost');
+    if (c.includes('delivered')) return t('statusDelivered');
+    if (c.includes('accept')) return t('statusOutgoing');
+    if (c.includes('rto')) return t('statusRTO');
 
     // Delivery Attempt Mappings
-    if (c.includes('customer change address')) return 'Customer requested to change delivery address';
-    if (c.includes('rescheduled')) return 'Rescheduled - Customer requested delay';
-    if (c.includes('out of zone')) return 'The delivery zone is not accessible';
-    if (c.includes('wrong number')) return 'The number is incorrect';
-    if (c.includes('mobile off')) return 'The mobile number is off';
-    if (c.includes('no response')) return 'No response from customer - Delivery re-attempt planned';
-    if (c.includes('wrong city')) return 'Delivery failed - Wrong city';
+    if (c.includes('customer change address')) return t('statusAddressChange');
+    if (c.includes('rescheduled')) return t('statusRescheduled');
+    if (c.includes('out of zone')) return t('statusOutOfZone');
+    if (c.includes('wrong number')) return t('statusWrongNumber');
+    if (c.includes('mobile off')) return t('statusMobileOff');
+    if (c.includes('no response')) return t('statusNoResponse');
+    if (c.includes('wrong city')) return t('statusWrongCity');
 
     // If it's already a sentence or has Arabic and wasn't mapped above, keep it
     if (comment.length > 25 || hasArabic) return comment;
@@ -68,11 +69,11 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
     if (c.includes('arrived_in_country')) {
       // Extract city if possible
       const city = comment.split(' ')[0];
-      return `Arrived in Country - ${titleCase(city)}`;
+      return t('statusArrivedCountry', { city: titleCase(city) });
     }
 
     if (c.includes('cancelled')) {
-      return 'Shipment Cancelled';
+      return t('statusCancelled');
     }
 
     return comment;
@@ -108,7 +109,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
     if ((!s || s === 'ERROR' || s === 'UNKNOWN') && shipment.history && shipment.history.length > 0) {
       return shipment.history[shipment.history.length - 1].event_name;
     }
-    return shipment.status || 'Unknown';
+    return shipment.status || t('unknown');
   };
 
   const effectiveStatus = getEffectiveStatus();
@@ -135,18 +136,27 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
     }, []);
   }, [shipment.history]);
 
+  // Stepper stages with translations
+  const stages = [
+    { key: 'Created', label: t('stageCreated') },
+    { key: 'Accepted', label: t('stageAccepted') },
+    { key: 'In transit', label: t('stageInTransit') },
+    { key: 'Last Mile', label: t('stageLastMile') },
+    { key: 'Delivered', label: t('stageDelivered') },
+  ];
+
   return (
     <div className={`${effectiveStatus.toLowerCase().includes('cancel') ? 'bg-red-50 border-red-100' : 'bg-[#006F4A]/5 border-[#006F4A]/20'} rounded-xl overflow-hidden mb-5 sm:mb-8 border transition-all duration-200 mx-1 sm:mx-0 shadow-sm`}>
       {/* Primary Horizontal Bar - Responsive Stacked on Mobile */}
-      <div className="bg-slate-50 px-5 sm:px-8 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-gray-100">
-        <div className="flex flex-col items-start w-full sm:w-auto">
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Track Number</span>
-          <span className="text-xl font-bold text-[#115e59]">{shipment.track_number || 'Unknown'}</span>
+      <div className={`bg-slate-50 px-5 sm:px-8 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-gray-100 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+        <div className={`flex flex-col ${isRTL ? 'items-end' : 'items-start'} w-full sm:w-auto`}>
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t('trackNumber')}</span>
+          <span className="text-xl font-bold text-[#115e59]" dir="ltr">{shipment.track_number || t('unknown')}</span>
         </div>
 
-        <div className="flex flex-row items-center gap-8 sm:gap-8 w-full sm:w-auto justify-start">
-          <div className="flex flex-col items-start">
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Current Status</span>
+        <div className={`flex flex-row items-center gap-8 sm:gap-8 w-full sm:w-auto ${isRTL ? 'justify-end' : 'justify-start'}`}>
+          <div className={`flex flex-col ${isRTL ? 'items-end' : 'items-start'}`}>
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t('currentStatus')}</span>
             <div className={`inline-flex px-3 py-1 bg-white border rounded-lg shadow-sm ${getStatusColor(effectiveStatus).replace('bg-', 'border-').split(' ')[2]}`}>
               <span className={`text-[11px] font-bold uppercase tracking-tight ${getStatusColor(effectiveStatus).split(' ')[1]}`}>
                 {effectiveStatus}
@@ -155,18 +165,18 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
           </div>
 
           {!effectiveStatus.toLowerCase().includes('cancel') && (
-            <div className="flex flex-col items-start">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Delivered Time</span>
+            <div className={`flex flex-col ${isRTL ? 'items-end' : 'items-start'}`}>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t('deliveredTime')}</span>
               <span className="text-[13px] font-semibold text-gray-900 leading-tight">
-                {shipment.timeline?.delivered_time ? formatShortDate(shipment.timeline.delivered_time) : 'Pending'}
+                {shipment.timeline?.delivered_time ? formatShortDate(shipment.timeline.delivered_time) : t('pending')}
               </span>
             </div>
           )}
 
           {/* Integrated ETA for Desktop */}
           {effectiveStatus.toLowerCase() !== 'delivered' && shipment.estimated_delivery_date && (
-            <div className="hidden sm:flex flex-col border-l border-gray-200 pl-8">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Arriving by</span>
+            <div className={`hidden sm:flex flex-col ${isRTL ? 'border-r pr-8' : 'border-l pl-8'} border-gray-200`}>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t('arrivingBy')}</span>
               <span className="text-[13px] font-semibold text-[#006F4A] leading-tight">
                 {formatShortDate(shipment.estimated_delivery_date)}
               </span>
@@ -179,7 +189,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
             onClick={() => setIsExpanded(!isExpanded)}
             className="flex items-center justify-between sm:justify-center gap-2 w-full sm:w-auto px-4 py-3 sm:py-2 bg-white border border-gray-200 rounded-lg text-xs font-bold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
           >
-            <span>View Full Details</span>
+            <span>{t('viewDetails')}</span>
             <svg
               className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
               fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -193,14 +203,14 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
       {/* Reference Image Layout Version */}
       <div className="px-5 sm:px-12 py-12 sm:py-16 bg-white">
         {/* Top Header Labels (Origin/Destination) - Desktop only for reference look */}
-        <div className="hidden sm:flex justify-between items-start mb-12">
-          <div className="flex flex-col text-left">
-            <span className="text-xl font-medium text-gray-300 mb-1">Origin</span>
+        <div className={`hidden sm:flex justify-between items-start mb-12 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex flex-col ${isRTL ? 'text-right items-end' : 'text-left'}`}>
+            <span className="text-xl font-medium text-gray-300 mb-1">{t('origin')}</span>
             <span className="text-lg font-bold text-gray-400 leading-tight uppercase tracking-tight">{shipment.shipper_address?.country || ''}</span>
             <span className="text-4xl font-bold text-gray-900">{titleCase(shipment.shipper_address?.city || '')}</span>
           </div>
-          <div className="flex flex-col items-end text-right">
-            <span className="text-xl font-medium text-gray-300 mb-1">Destination</span>
+          <div className={`flex flex-col ${isRTL ? 'text-left items-start' : 'items-end text-right'}`}>
+            <span className="text-xl font-medium text-gray-300 mb-1">{t('destination')}</span>
             <span className="text-lg font-bold text-gray-400 leading-tight uppercase tracking-tight">{shipment.consignee_address?.country || ''}</span>
             <span className="text-4xl font-bold text-gray-900">{titleCase(shipment.consignee_address?.city || '')}</span>
           </div>
@@ -209,10 +219,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
         {/* Horizontal Stepper */}
         <div className="relative">
           {/* Tracking Line - Layered with Baseline */}
-          <div className="absolute 
-            left-5 top-5 bottom-5 w-px sm:left-6 sm:right-6 sm:top-[23px] sm:bottom-auto sm:h-px sm:w-auto
-            z-0"
-          >
+          <div className={`absolute top-5 bottom-5 w-px sm:top-[23px] sm:bottom-auto sm:h-px sm:w-auto sm:left-6 sm:right-6 z-0 ${isRTL ? 'right-5 sm:right-6' : 'left-5 sm:left-6'}`}>
             {/* Gray Baseline */}
             <div className="absolute inset-0 bg-gray-200 z-0" />
 
@@ -223,20 +230,20 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
             />
             {/* Progress indicator - Desktop (Horizontal) */}
             <div
-              className="hidden sm:block absolute inset-y-0 left-0 bg-[#006F4A] transition-all duration-1000 ease-out z-10"
+              className={`hidden sm:block absolute inset-y-0 bg-[#006F4A] transition-all duration-1000 ease-out z-10 ${isRTL ? 'right-0' : 'left-0'}`}
               style={{ width: `${determineProgressWidth(effectiveStatus)}%` }}
             />
           </div>
 
           {/* Checkpoints Stack */}
-          <div className="relative flex flex-col sm:flex-row justify-between gap-10 sm:gap-0 z-10">
-            {['Created', 'Accepted', 'In transit', 'Last Mile', 'Delivered'].map((stage, idx) => {
-              const isCompleted = isStageCompleted(stage, effectiveStatus, idx);
-              const isCurrent = isCurrentStage(stage, effectiveStatus, idx);
-              const isDelivered = stage === 'Delivered' && isCompleted;
+          <div className={`relative flex flex-col sm:flex-row justify-between gap-10 sm:gap-0 z-10 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+            {stages.map((stage, idx) => {
+              const isCompleted = isStageCompleted(stage.key, effectiveStatus, idx);
+              const isCurrent = isCurrentStage(stage.key, effectiveStatus, idx);
+              const isDelivered = stage.key === 'Delivered' && isCompleted;
 
               return (
-                <div key={stage} className="flex flex-row sm:flex-col items-center sm:items-center relative group">
+                <div key={stage.key} className={`flex ${isRTL ? 'flex-row-reverse' : 'flex-row'} sm:flex-col items-center sm:items-center relative group`}>
                   {/* Icon Circle */}
                   <div className={`w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-full flex items-center justify-center transition-all duration-500 ${idx === 4 // Delivered state normally hollow in reference
                     ? 'bg-white border-2 border-[#006F4A] text-[#006F4A]'
@@ -244,21 +251,22 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                       ? 'bg-[#006F4A] text-white'
                       : 'bg-white border-2 border-gray-100 text-gray-200'
                     }`}>
-                    {getTimelineIcon(stage, isCompleted || isCurrent)}
+                    {getTimelineIcon(stage.key, isCompleted || isCurrent)}
                   </div>
 
                   {/* Labels Below (All Caps) */}
-                  <div className="ml-4 sm:ml-0 sm:mt-6 flex flex-col sm:items-center">
+                  <div className={`${isRTL ? 'mr-4 sm:mr-0' : 'ml-4 sm:ml-0'} sm:mt-6 flex flex-col sm:items-center`}>
                     <span className={`text-[10px] sm:text-[11px] font-bold tracking-wider uppercase leading-none ${isCurrent || isCompleted
-                      ? stage === 'Delivered' ? 'text-[#006F4A]' : 'text-gray-900'
+                      ? stage.key === 'Delivered' ? 'text-[#006F4A]' : 'text-gray-900'
                       : 'text-gray-300'
                       }`}>
-                      {stage}
+                      {stage.label}
                     </span>
 
                     {/* Muted Timestamps */}
-                    <div className="mt-2 h-4"> {/* Spacer for consistent alignment */}
-                      {stage === 'Created' && (
+                    <div className="mt-2 h-4">
+                      {/* Spacer for consistent alignment */}
+                      {stage.key === 'Created' && (
                         <span className="text-[9px] font-medium text-gray-300 whitespace-nowrap uppercase tracking-tighter">
                           {formatShortDate(
                             shipment.history?.find(h => h.event_name.toLowerCase().includes('create'))?.event_date ||
@@ -266,7 +274,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                           )}
                         </span>
                       )}
-                      {stage === 'Delivered' && shipment.timeline?.delivered_time && (
+                      {stage.key === 'Delivered' && shipment.timeline?.delivered_time && (
                         <span className="text-[9px] font-medium text-[#006F4A] whitespace-nowrap uppercase tracking-tighter">
                           {formatShortDate(shipment.timeline.delivered_time)}
                         </span>
@@ -284,35 +292,33 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
         <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isExpanded ? 'max-h-[9999px] opacity-100 border-t border-[#006F4A]/20 mt-12 sm:mt-16' : 'max-h-0 opacity-0'}`}>
           <div className="p-8 bg-gray-50/50 border-x border-b border-gray-100 rounded-b-xl">
             {/* New Info Grid: Receiver & Shipment Facts */}
-            {/* New Info Grid: Receiver & Shipment Facts */}
-            {/* New Info Grid: Receiver & Shipment Facts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
               {/* Receiver Details (Masked) - Card Grid Style */}
               <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                  RECEIVER DETAILS
+                <h5 className={`text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  {t('receiverDetails')}
                 </h5>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Name Card */}
-                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">Name</span>
-                    <div className="flex items-center gap-2">
+                  <div className={`p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center ${isRTL ? 'items-end' : ''}`}>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">{t('name')}</span>
+                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                       <span className="text-sm font-bold text-gray-900 truncate">{maskString(shipment.consignee_address?.name || '', 'name')}</span>
                     </div>
                   </div>
                   {/* Phone Card */}
-                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">Phone</span>
-                    <div className="flex items-center gap-2">
+                  <div className={`p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center ${isRTL ? 'items-end' : ''}`}>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">{t('phone')}</span>
+                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                      <span className="text-sm font-bold text-gray-900 tracking-tight truncate">{maskString(shipment.consignee_address?.phone || '', 'phone')}</span>
+                      <span className="text-sm font-bold text-gray-900 tracking-tight truncate" dir="ltr">{maskString(shipment.consignee_address?.phone || '', 'phone')}</span>
                     </div>
                   </div>
                   {/* Location Card - Full Width */}
-                  <div className="col-span-1 sm:col-span-2 p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">Location</span>
-                    <div className="flex items-center gap-2">
+                  <div className={`col-span-1 sm:col-span-2 p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center ${isRTL ? 'items-end' : ''}`}>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">{t('location')}</span>
+                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                       <span className="text-sm font-bold text-gray-900">{shipment.consignee_address?.city || '---'}, {shipment.consignee_address?.country || ''}</span>
                     </div>
@@ -322,37 +328,37 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
 
               {/* Shipment Facts - Card Grid Style */}
               <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-                <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                  SHIPMENT FACTS
+                <h5 className={`text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  {t('shipmentFacts')}
                 </h5>
                 <div className="grid grid-cols-2 gap-4 h-full content-start">
                   {/* Pieces Card */}
-                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center transition-colors hover:bg-gray-100 group">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">Pieces</span>
-                    <div className="flex items-center gap-2">
+                  <div className={`p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center transition-colors hover:bg-gray-100 group ${isRTL ? 'items-end' : ''}`}>
+                    <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">{t('pieces')}</span>
+                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
                       <span className="text-sm font-bold text-gray-900">{shipment.parcels?.length || 1}</span>
                     </div>
                   </div>
                   {/* COD Card */}
                   {(shipment.cod_value && parseFloat(shipment.cod_value) > 0) ? (
-                    <div className="p-4 bg-orange-50 rounded-xl border border-orange-100 flex flex-col justify-center transition-colors hover:bg-orange-100">
-                      <span className="text-[10px] text-orange-400 font-bold uppercase mb-1">COD Amount</span>
+                    <div className={`p-4 bg-orange-50 rounded-xl border border-orange-100 flex flex-col justify-center transition-colors hover:bg-orange-100 ${isRTL ? 'items-end' : ''}`}>
+                      <span className="text-[10px] text-orange-400 font-bold uppercase mb-1">{t('codAmount')}</span>
                       <span className="text-sm font-bold text-gray-900">{shipment.cod_value} <span className="text-[10px] text-gray-500">{shipment.cod_currency}</span></span>
                     </div>
                   ) : (
-                    <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center opacity-50">
-                      <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">COD</span>
-                      <span className="text-[10px] font-bold text-gray-400">Paid / None</span>
+                    <div className={`p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col justify-center opacity-50 ${isRTL ? 'items-end' : ''}`}>
+                      <span className="text-[10px] text-gray-400 font-bold uppercase mb-1">{t('cod')}</span>
+                      <span className="text-[10px] font-bold text-gray-400">{t('paidNone')}</span>
                     </div>
                   )}
                 </div>
               </div>
             </div>
 
-            <h4 className="text-md font-bold text-[#006F4A] mb-6 flex items-center gap-2">
+            <h4 className={`text-md font-bold text-[#006F4A] mb-6 flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              Shipment History Details
+              {t('historyTitle')}
             </h4>
 
             {processedHistory.length > 0 ? (
@@ -365,7 +371,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                   const isDelivered = name === 'delivered' || (name.includes('delivered') && !isAttempted && !isOFD) || name.includes('return to');
 
                   return (
-                    <div key={i} className={`bg-white p-6 rounded-xl border shadow-sm flex items-start gap-6 group transition-all duration-300 ${isCanceled ? 'border-red-100 hover:border-red-200' :
+                    <div key={i} className={`bg-white p-6 rounded-xl border shadow-sm flex ${isRTL ? 'flex-row-reverse' : ''} items-start gap-6 group transition-all duration-300 ${isCanceled ? 'border-red-100 hover:border-red-200' :
                       isAttempted ? 'border-amber-100 hover:border-amber-200' :
                         isOFD ? 'border-[#00A0AF]/20 hover:border-[#00A0AF]/40' :
                           'border-gray-100 hover:border-[#006F4A]/30'
@@ -381,7 +387,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                         {getEventIcon(ev.event_name)}
                       </div>
                       <div className="flex-grow">
-                        <div className="flex justify-between items-center gap-4">
+                        <div className={`flex justify-between items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                           <div>
                             <h5 className={`text-base font-black uppercase tracking-tight ${isCanceled ? 'text-red-700' :
                               isAttempted ? 'text-amber-700' :
@@ -389,14 +395,14 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                                   'text-gray-900'
                               }`}>{ev.event_name}</h5>
                           </div>
-                          <div className="text-right whitespace-nowrap">
+                          <div className={`${isRTL ? 'text-left' : 'text-right'} whitespace-nowrap`}>
                             <span className="text-xs font-black text-gray-900 block">{formatShipmentDate(ev.event_date).split(' ').slice(0, 2).join(' ')}</span>
                             <span className="text-[11px] font-bold text-gray-400 uppercase">{formatShipmentDate(ev.event_date).split(' ').slice(2).join(' ')}</span>
                           </div>
                         </div>
                         <div className={`mt-1.5 py-2 px-3 rounded-lg transition-colors ${isCanceled ? 'bg-red-50 group-hover:bg-red-100' : 'bg-gray-50 group-hover:bg-gray-100'}`}>
                           <p className={`text-xs font-medium ${isCanceled ? 'text-red-600' : 'text-gray-600'}`}>
-                            {simplifyComment(ev.event_description) || `Shipment processed and ${ev.event_name?.toLowerCase()} at ${ev.event_location || 'our sorting center'}.`}
+                            {simplifyComment(ev.event_description) || t('statusProcessed', { eventName: ev.event_name?.toLowerCase(), location: ev.event_location || t('sortingCenter') })}
                           </p>
                         </div>
                       </div>
@@ -405,7 +411,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                 })}
               </div>
             ) : (
-              <p className="text-gray-500 italic">No detailed history available.</p>
+              <p className="text-gray-500 italic">{t('noHistory')}</p>
             )}
           </div>
         </div>
