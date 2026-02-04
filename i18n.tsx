@@ -14,13 +14,13 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     // Page
     pageTitle: 'Track Shipment',
-    
+
     // Search Section
     enterTrackingCode: 'Enter Tracking Code',
     placeholder: 'e.g. S0005747286',
     search: 'Search',
     loading: 'Extracting Tracking Data...',
-    
+
     // Errors
     errorEmpty: 'Please enter a tracking number',
     errorTooShort: 'Tracking number is too short. Please enter a valid code.',
@@ -32,11 +32,11 @@ const translations: Record<Language, Record<string, string>> = {
     errorAccessDenied: 'System error: API access denied. Contact support.',
     errorGeneric: 'Request failed - please try again',
     errorUnexpected: 'An unexpected error occurred. Please try again later.',
-    
+
     // Empty State
     readyToTrack: 'Ready to Track?',
     readyToTrackDesc: 'Enter a valid Starlinks tracking number above to see the real-time journey of your shipment.',
-    
+
     // Shipment Card Header
     trackNumber: 'Track Number',
     currentStatus: 'Current Status',
@@ -45,35 +45,35 @@ const translations: Record<Language, Record<string, string>> = {
     viewDetails: 'View Full Details',
     pending: 'Pending',
     unknown: 'Unknown',
-    
+
     // Origin/Destination
     origin: 'Origin',
     destination: 'Destination',
-    
+
     // Progress Stages
     stageCreated: 'Created',
     stageAccepted: 'Accepted',
     stageInTransit: 'In transit',
     stageLastMile: 'Last Mile',
     stageDelivered: 'Delivered',
-    
+
     // Receiver Details
     receiverDetails: 'RECEIVER DETAILS',
     name: 'Name',
     phone: 'Phone',
     location: 'Location',
-    
+
     // Shipment Facts
     shipmentFacts: 'SHIPMENT FACTS',
     pieces: 'Pieces',
     codAmount: 'COD Amount',
     cod: 'COD',
     paidNone: 'Paid / None',
-    
+
     // History
     historyTitle: 'Shipment History Details',
     noHistory: 'No detailed history available.',
-    
+
     // Status Messages
     statusOutForPickup: 'Parcel is on its way to be picked up',
     statusPickupFailed: 'Pickup attempt unsuccessful',
@@ -97,10 +97,27 @@ const translations: Record<Language, Record<string, string>> = {
     statusArrivedCountry: 'Arrived in Country - {city}',
     statusProcessed: 'Shipment processed and {eventName} at {location}.',
     sortingCenter: 'our sorting center',
-    
+
+    // Event Names (from API)
+    eventCreated: 'Created',
+    eventPickupCompleted: 'Pickup Completed',
+    eventPickupScheduled: 'Pickup Scheduled',
+    eventPickupAwaited: 'Pickup Awaited',
+    eventInTransit: 'In Transit',
+    eventArrivedAtHub: 'Arrived at Hub',
+    eventArrivedAtDestinationHub: 'Arrived at Destination Hub',
+    eventOutForDelivery: 'Out for Delivery',
+    eventDeliveryAttempt: 'Delivery Attempt',
+    eventDelivered: 'Delivered',
+    eventCancelled: 'Cancelled',
+    eventReturned: 'Returned',
+    eventRtoDelivered: 'RTO Delivered',
+    eventOnHold: 'On Hold',
+    eventInscanAtHub: 'Received at Hub',
+
     // Feedback Widget
     needHelp: 'Need Help ?',
-    
+
     // Field Labels
     fieldTrackNumber: 'Track Number',
     fieldStatus: 'Status',
@@ -124,14 +141,14 @@ const translations: Record<Language, Record<string, string>> = {
     fieldPudoId: 'PUDO ID',
     fieldEstimatedDeliveryDate: 'Estimated Delivery Date',
     fieldScheduledDeliveryDate: 'Scheduled Delivery Date',
-    
+
     // Timeline Labels
     fieldFirstHubScan: 'First Hub Scan',
     fieldOfdTime: 'Out For Delivery',
     fieldFirstDeliveryAttempt: 'First Delivery Attempt',
     fieldLastDeliveryAttempt: 'Last Delivery Attempt',
     fieldDeliveredTime: 'Delivered Time',
-    
+
     // Consignee Fields
     fieldConsigneeName: 'Consignee Name',
     fieldConsigneePhone: 'Consignee Phone',
@@ -142,7 +159,7 @@ const translations: Record<Language, Record<string, string>> = {
     fieldConsigneeZip: 'Consignee Zip',
     fieldConsigneeAddress1: 'Consignee Address 1',
     fieldConsigneeAddress2: 'Consignee Address 2',
-    
+
     // Shipper Fields
     fieldShipperName: 'Shipper Name',
     fieldShipperPhone: 'Shipper Phone',
@@ -152,7 +169,7 @@ const translations: Record<Language, Record<string, string>> = {
     fieldShipperZip: 'Shipper Zip',
     fieldShipperAddress1: 'Shipper Address 1',
     fieldShipperAddress2: 'Shipper Address 2',
-    
+
     // Parcel Fields
     fieldParcelDescription: 'Parcel Description',
     fieldParcelWarehouse: 'Parcel Warehouse',
@@ -165,13 +182,13 @@ const translations: Record<Language, Record<string, string>> = {
   ar: {
     // Page
     pageTitle: 'تتبع الشحنة',
-    
+
     // Search Section
     enterTrackingCode: 'أدخل رقم التتبع',
     placeholder: 'مثال: S0005747286',
     search: 'بحث',
     loading: 'جاري استخراج بيانات التتبع...',
-    
+
     // Errors
     errorEmpty: 'الرجاء إدخال رقم التتبع',
     errorTooShort: 'رقم التتبع قصير جداً. الرجاء إدخال رقم صحيح.',
@@ -183,11 +200,11 @@ const translations: Record<Language, Record<string, string>> = {
     errorAccessDenied: 'خطأ في النظام: تم رفض الوصول. الرجاء الاتصال بالدعم.',
     errorGeneric: 'فشل الطلب - الرجاء المحاولة مرة أخرى',
     errorUnexpected: 'حدث خطأ غير متوقع. الرجاء المحاولة لاحقاً.',
-    
+
     // Empty State
     readyToTrack: 'جاهز للتتبع؟',
     readyToTrackDesc: 'أدخل رقم تتبع صالح أعلاه لمعرفة رحلة شحنتك.',
-    
+
     // Shipment Card Header
     trackNumber: 'رقم التتبع',
     currentStatus: 'الحالة الحالية',
@@ -196,35 +213,35 @@ const translations: Record<Language, Record<string, string>> = {
     viewDetails: 'عرض التفاصيل الكاملة',
     pending: 'قيد الانتظار',
     unknown: 'غير معروف',
-    
+
     // Origin/Destination
     origin: 'المصدر',
     destination: 'الوجهة',
-    
+
     // Progress Stages
     stageCreated: 'تم الإنشاء',
     stageAccepted: 'تم الاستلام',
     stageInTransit: 'في الطريق',
     stageLastMile: 'التوصيل النهائي',
     stageDelivered: 'تم التسليم',
-    
+
     // Receiver Details
     receiverDetails: 'بيانات المستلم',
     name: 'الاسم',
     phone: 'الهاتف',
     location: 'الموقع',
-    
+
     // Shipment Facts
     shipmentFacts: 'معلومات الشحنة',
     pieces: 'القطع',
     codAmount: 'مبلغ الدفع عند الاستلام',
     cod: 'الدفع عند الاستلام',
     paidNone: 'مدفوع / لا يوجد',
-    
+
     // History
     historyTitle: 'تفاصيل سجل الشحنة',
     noHistory: 'لا يوجد سجل تفصيلي متاح.',
-    
+
     // Status Messages
     statusOutForPickup: 'الطرد في طريقه للاستلام',
     statusPickupFailed: 'محاولة الاستلام غير ناجحة',
@@ -248,10 +265,27 @@ const translations: Record<Language, Record<string, string>> = {
     statusArrivedCountry: 'وصل إلى البلد - {city}',
     statusProcessed: 'تمت معالجة الشحنة و{eventName} في {location}.',
     sortingCenter: 'مركز الفرز',
-    
+
+    // Event Names (from API)
+    eventCreated: 'تم الإنشاء',
+    eventPickupCompleted: 'تم الاستلام',
+    eventPickupScheduled: 'تم جدولة الاستلام',
+    eventPickupAwaited: 'في انتظار الاستلام',
+    eventInTransit: 'في الطريق',
+    eventArrivedAtHub: 'وصل إلى المستودع',
+    eventArrivedAtDestinationHub: 'وصل إلى مستودع الوجهة',
+    eventOutForDelivery: 'خارج للتسليم',
+    eventDeliveryAttempt: 'محاولة تسليم',
+    eventDelivered: 'تم التسليم',
+    eventCancelled: 'ملغي',
+    eventReturned: 'مرتجع',
+    eventRtoDelivered: 'تم تسليم المرتجع',
+    eventOnHold: 'قيد الانتظار',
+    eventInscanAtHub: 'تم الاستلام في المستودع',
+
     // Feedback Widget
     needHelp: 'تحتاج مساعدة؟',
-    
+
     // Field Labels
     fieldTrackNumber: 'رقم التتبع',
     fieldStatus: 'الحالة',
@@ -275,14 +309,14 @@ const translations: Record<Language, Record<string, string>> = {
     fieldPudoId: 'معرف PUDO',
     fieldEstimatedDeliveryDate: 'تاريخ التسليم المتوقع',
     fieldScheduledDeliveryDate: 'تاريخ التسليم المجدول',
-    
+
     // Timeline Labels
     fieldFirstHubScan: 'أول فحص في المستودع',
     fieldOfdTime: 'في الطريق للتسليم',
     fieldFirstDeliveryAttempt: 'أول محاولة تسليم',
     fieldLastDeliveryAttempt: 'آخر محاولة تسليم',
     fieldDeliveredTime: 'وقت التسليم',
-    
+
     // Consignee Fields
     fieldConsigneeName: 'اسم المستلم',
     fieldConsigneePhone: 'هاتف المستلم',
@@ -293,7 +327,7 @@ const translations: Record<Language, Record<string, string>> = {
     fieldConsigneeZip: 'الرمز البريدي للمستلم',
     fieldConsigneeAddress1: 'عنوان المستلم 1',
     fieldConsigneeAddress2: 'عنوان المستلم 2',
-    
+
     // Shipper Fields
     fieldShipperName: 'اسم المرسل',
     fieldShipperPhone: 'هاتف المرسل',
@@ -303,7 +337,7 @@ const translations: Record<Language, Record<string, string>> = {
     fieldShipperZip: 'الرمز البريدي للمرسل',
     fieldShipperAddress1: 'عنوان المرسل 1',
     fieldShipperAddress2: 'عنوان المرسل 2',
-    
+
     // Parcel Fields
     fieldParcelDescription: 'وصف الطرد',
     fieldParcelWarehouse: 'مستودع الطرد',
@@ -339,13 +373,13 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   const t = useCallback((key: string, params?: Record<string, string>): string => {
     let text = translations[language][key] || translations['en'][key] || key;
-    
+
     if (params) {
       Object.entries(params).forEach(([paramKey, paramValue]) => {
         text = text.replace(`{${paramKey}}`, paramValue);
       });
     }
-    
+
     return text;
   }, [language]);
 

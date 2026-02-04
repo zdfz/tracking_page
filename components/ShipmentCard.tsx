@@ -17,6 +17,33 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
     return String(val);
   };
 
+  // Translate event names from API to localized text
+  const translateEventName = (eventName: string): string => {
+    if (!eventName) return t('unknown');
+
+    const name = eventName.toLowerCase().trim();
+
+    // Map API event names to translation keys
+    if (name === 'created' || name.includes('create')) return t('eventCreated');
+    if (name === 'pickup completed' || name === 'pickup_completed') return t('eventPickupCompleted');
+    if (name === 'pickup scheduled' || name === 'pickup_scheduled') return t('eventPickupScheduled');
+    if (name === 'pickup awaited' || name === 'pickup_awaited') return t('eventPickupAwaited');
+    if (name === 'in transit' || name === 'intransit' || name === 'in_transit') return t('eventInTransit');
+    if (name === 'arrived at destination hub' || name.includes('destination hub')) return t('eventArrivedAtDestinationHub');
+    if (name.includes('arrived') && name.includes('hub')) return t('eventArrivedAtHub');
+    if (name === 'out for delivery' || name === 'outfordelivery' || name.includes('out for delivery')) return t('eventOutForDelivery');
+    if (name.includes('attempt')) return t('eventDeliveryAttempt');
+    if (name === 'delivered') return t('eventDelivered');
+    if (name === 'cancelled' || name === 'canceled') return t('eventCancelled');
+    if (name === 'rto delivered' || name === 'rto_delivered') return t('eventRtoDelivered');
+    if (name.includes('return')) return t('eventReturned');
+    if (name === 'on hold' || name === 'on_hold') return t('eventOnHold');
+    if (name.includes('inscan') || name.includes('hub scan')) return t('eventInscanAtHub');
+
+    // Fallback: return original if no match
+    return eventName;
+  };
+
   const getStatusColor = (status: string) => {
     const s = status?.toLowerCase() || '';
     if (s.includes('delivered') || s.includes('rto_delivered')) return 'bg-[#006F4A]/10 text-[#006F4A] border-[#006F4A]/20';
@@ -393,7 +420,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                               isAttempted ? 'text-amber-700' :
                                 isOFD ? 'text-[#00A0AF]' :
                                   'text-gray-900'
-                              }`}>{ev.event_name}</h5>
+                              }`}>{translateEventName(ev.event_name)}</h5>
                           </div>
                           <div className={`${isRTL ? 'text-left' : 'text-right'} whitespace-nowrap`}>
                             <span className="text-xs font-black text-gray-900 block">{formatShipmentDate(ev.event_date).split(' ').slice(0, 2).join(' ')}</span>
