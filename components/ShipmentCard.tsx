@@ -227,7 +227,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t('currentStatus')}</span>
             <div className={`inline-flex px-3 py-1 bg-white border rounded-lg shadow-sm ${getStatusColor(effectiveStatus).replace('bg-', 'border-').split(' ')[2]}`}>
               <span className={`text-[11px] font-bold uppercase tracking-tight ${getStatusColor(effectiveStatus).split(' ')[1]}`}>
-                {effectiveStatus}
+                {translateEventName(effectiveStatus)}
               </span>
             </div>
           </div>
@@ -304,7 +304,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
           </div>
 
           {/* Checkpoints Stack */}
-          <div className={`relative flex flex-col sm:flex-row justify-between gap-10 sm:gap-0 z-10 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+          <div className={`relative flex ${isRTL ? 'flex-col-reverse' : 'flex-col'} sm:flex-row justify-between gap-10 sm:gap-0 z-10 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
             {stages.map((stage, idx) => {
               const isCompleted = isStageCompleted(stage.key, effectiveStatus, idx);
               const isCurrent = isCurrentStage(stage.key, effectiveStatus, idx);
