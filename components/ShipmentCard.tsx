@@ -457,11 +457,13 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                       <div className="flex-grow">
                         <div className={`flex justify-between items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                           <div>
-                            <h5 className={`text-base font-black uppercase tracking-tight ${isCanceled ? 'text-red-700' :
-                              isAttempted ? 'text-amber-700' :
-                                isOFD ? 'text-[#00A0AF]' :
-                                  'text-gray-900'
-                              }`}>{translateEventName(ev.event_name)}</h5>
+                            <h5
+                              dir={isRTL ? 'rtl' : 'ltr'}
+                              className={`text-base font-black uppercase tracking-tight ${isCanceled ? 'text-red-700' :
+                                isAttempted ? 'text-amber-700' :
+                                  isOFD ? 'text-[#00A0AF]' :
+                                    'text-gray-900'
+                                }`}>{translateEventName(ev.event_name)}</h5>
                           </div>
                           <div className={`${isRTL ? 'text-left' : 'text-right'} whitespace-nowrap`}>
                             <span className="text-xs font-black text-gray-900 block">{formatShipmentDate(ev.event_date).split(' ').slice(0, 2).join(' ')}</span>
@@ -469,7 +471,9 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                           </div>
                         </div>
                         <div className={`mt-1.5 py-2 px-3 rounded-lg transition-colors ${isCanceled ? 'bg-red-50 group-hover:bg-red-100' : 'bg-gray-50 group-hover:bg-gray-100'}`}>
-                          <p className={`text-xs font-medium ${isCanceled ? 'text-red-600' : 'text-gray-600'}`}>
+                          <p
+                            dir={isRTL ? 'rtl' : 'ltr'}
+                            className={`text-xs font-medium ${isCanceled ? 'text-red-600' : 'text-gray-600'}`}>
                             {simplifyComment(ev.event_description) || t('statusProcessed', { eventName: ev.event_name?.toLowerCase(), location: ev.event_location || t('sortingCenter') })}
                           </p>
                         </div>
