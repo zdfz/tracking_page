@@ -17,28 +17,28 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
     return String(val);
   };
 
-  // Format event names to proper English (always English, no translation)
+  // Translate event names to current language
   const translateEventName = (eventName: string): string => {
-    if (!eventName) return 'Unknown';
+    if (!eventName) return t('unknown');
 
     const name = eventName.toLowerCase().trim();
 
-    // Map API event names to proper English display names
-    if (name === 'created' || name.includes('create')) return 'Created';
-    if (name === 'pickup completed' || name === 'pickup_completed') return 'Pickup Completed';
-    if (name === 'pickup scheduled' || name === 'pickup_scheduled') return 'Pickup Scheduled';
-    if (name === 'pickup awaited' || name === 'pickup_awaited') return 'Pickup Awaited';
-    if (name === 'in transit' || name === 'intransit' || name === 'in_transit') return 'In Transit';
-    if (name === 'arrived at destination hub' || name.includes('destination hub')) return 'Arrived at Destination Hub';
-    if (name.includes('arrived') && name.includes('hub')) return 'Arrived at Hub';
-    if (name === 'out for delivery' || name === 'outfordelivery' || name.includes('out for delivery')) return 'Out for Delivery';
-    if (name.includes('attempt')) return 'Delivery Attempt';
-    if (name === 'delivered') return 'Delivered';
-    if (name === 'cancelled' || name === 'canceled') return 'Cancelled';
-    if (name === 'rto delivered' || name === 'rto_delivered') return 'RTO Delivered';
-    if (name.includes('return')) return 'Returned';
-    if (name === 'on hold' || name === 'on_hold') return 'On Hold';
-    if (name.includes('inscan') || name.includes('hub scan')) return 'Received at Hub';
+    // Map API event names to translation keys
+    if (name === 'created' || name.includes('create')) return t('eventCreated');
+    if (name === 'pickup completed' || name === 'pickup_completed') return t('eventPickupCompleted');
+    if (name === 'pickup scheduled' || name === 'pickup_scheduled') return t('eventPickupScheduled');
+    if (name === 'pickup awaited' || name === 'pickup_awaited') return t('eventPickupAwaited');
+    if (name === 'in transit' || name === 'intransit' || name === 'in_transit') return t('eventInTransit');
+    if (name === 'arrived at destination hub' || name.includes('destination hub')) return t('eventArrivedAtDestinationHub');
+    if (name.includes('arrived') && name.includes('hub')) return t('eventArrivedAtHub');
+    if (name === 'out for delivery' || name === 'outfordelivery' || name.includes('out for delivery')) return t('eventOutForDelivery');
+    if (name.includes('attempt')) return t('eventDeliveryAttempt');
+    if (name === 'delivered') return t('eventDelivered');
+    if (name === 'cancelled' || name === 'canceled') return t('eventCancelled');
+    if (name === 'rto delivered' || name === 'rto_delivered') return t('eventRtoDelivered');
+    if (name.includes('return')) return t('eventReturned');
+    if (name === 'on hold' || name === 'on_hold') return t('eventOnHold');
+    if (name.includes('inscan') || name.includes('hub scan')) return t('eventInscanAtHub');
 
     // Fallback: return original if no match
     return eventName;
@@ -82,8 +82,8 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
       return t('commentOutForDelivery');
     }
 
-    // Successfully delivered patterns
-    if (c.includes('successfully delivered') || c === 'delivered') {
+    // Successfully delivered patterns - e.g. "DAMMAM delivered", "delivered", "successfully delivered"
+    if (c.includes('delivered')) {
       return t('commentDelivered');
     }
 

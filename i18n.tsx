@@ -44,7 +44,6 @@ const translations: Record<Language, Record<string, string>> = {
     arrivingBy: 'Arriving by',
     viewDetails: 'View Full Details',
     pending: 'Pending',
-    unknown: 'Unknown',
 
     // Origin/Destination
     origin: 'Origin',
