@@ -454,9 +454,9 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                         }`}>
                         {getEventIcon(ev.event_name)}
                       </div>
-                      <div className="flex-grow">
+                      <div className={`flex-grow ${isRTL ? 'text-right' : 'text-left'}`}>
                         <div className={`flex justify-between items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                          <div>
+                          <div className={isRTL ? 'text-right' : 'text-left'}>
                             <h5
                               dir={isRTL ? 'rtl' : 'ltr'}
                               className={`text-base font-black uppercase tracking-tight ${isCanceled ? 'text-red-700' :
@@ -470,7 +470,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                             <span className="text-[11px] font-bold text-gray-400 uppercase">{formatShipmentDate(ev.event_date).split(' ').slice(2).join(' ')}</span>
                           </div>
                         </div>
-                        <div className={`mt-1.5 py-2 px-3 rounded-lg transition-colors ${isCanceled ? 'bg-red-50 group-hover:bg-red-100' : 'bg-gray-50 group-hover:bg-gray-100'}`}>
+                        <div className={`mt-1.5 py-2 px-3 rounded-lg transition-colors ${isRTL ? 'text-right' : 'text-left'} ${isCanceled ? 'bg-red-50 group-hover:bg-red-100' : 'bg-gray-50 group-hover:bg-gray-100'}`}>
                           <p
                             dir={isRTL ? 'rtl' : 'ltr'}
                             className={`text-xs font-medium ${isCanceled ? 'text-red-600' : 'text-gray-600'}`}>
