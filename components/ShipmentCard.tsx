@@ -439,11 +439,12 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                   const isDelivered = name === 'delivered' || (name.includes('delivered') && !isAttempted && !isOFD) || name.includes('return to');
 
                   return (
-                    <div key={i} className={`bg-white p-6 rounded-xl border shadow-sm flex ${isRTL ? 'flex-row-reverse' : ''} items-start gap-6 group transition-all duration-300 ${isCanceled ? 'border-red-100 hover:border-red-200' :
+                    <div key={i} className={`bg-white p-6 rounded-xl border shadow-sm flex items-start gap-6 group transition-all duration-300 ${isCanceled ? 'border-red-100 hover:border-red-200' :
                       isAttempted ? 'border-amber-100 hover:border-amber-200' :
                         isOFD ? 'border-[#00A0AF]/20 hover:border-[#00A0AF]/40' :
                           'border-gray-100 hover:border-[#006F4A]/30'
-                      }`}>
+                      }`}
+                      style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}>
                       <div className={`p-3 rounded-xl shrink-0 ${isDelivered ? 'bg-[#006F4A]/10 text-[#006F4A]' :
                         isCanceled ? 'bg-red-100 text-red-600' :
                           isAttempted ? 'bg-amber-100 text-amber-600' :
@@ -455,7 +456,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                         {getEventIcon(ev.event_name)}
                       </div>
                       <div className={`flex-grow ${isRTL ? 'text-right' : 'text-left'}`}>
-                        <div className={`flex justify-between items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className="flex justify-between items-center gap-4" style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}>
                           <div className={isRTL ? 'text-right' : 'text-left'}>
                             <h5
                               dir={isRTL ? 'rtl' : 'ltr'}
