@@ -304,7 +304,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
           </div>
 
           {/* Checkpoints Stack */}
-          <div className={`relative flex ${isRTL ? 'flex-col-reverse' : 'flex-col'} sm:flex-row justify-between gap-10 sm:gap-0 z-10 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+          <div className={`relative flex flex-col sm:flex-row justify-between gap-10 sm:gap-0 z-10 ${isRTL ? 'sm:flex-row-reverse items-end' : 'items-start'}`}>
             {stages.map((stage, idx) => {
               const isCompleted = isStageCompleted(stage.key, effectiveStatus, idx);
               const isCurrent = isCurrentStage(stage.key, effectiveStatus, idx);
