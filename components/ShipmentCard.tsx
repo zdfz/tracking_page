@@ -304,14 +304,14 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
           </div>
 
           {/* Checkpoints Stack */}
-          <div className={`relative flex flex-col sm:flex-row justify-between gap-10 sm:gap-0 z-10 ${isRTL ? 'sm:flex-row-reverse items-end' : 'items-start'}`}>
+          <div className={`relative flex flex-col sm:flex-row justify-between gap-10 sm:gap-0 z-10 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
             {stages.map((stage, idx) => {
               const isCompleted = isStageCompleted(stage.key, effectiveStatus, idx);
               const isCurrent = isCurrentStage(stage.key, effectiveStatus, idx);
               const isDelivered = stage.key === 'Delivered' && isCompleted;
 
               return (
-                <div key={stage.key} className={`flex ${isRTL ? 'flex-row-reverse' : 'flex-row'} sm:flex-col items-center sm:items-center relative group`}>
+                <div key={stage.key} className="flex flex-row sm:flex-col items-center sm:items-center relative group">
                   {/* Icon Circle */}
                   <div className={`w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-full flex items-center justify-center transition-all duration-500 ${idx === 4 // Delivered state normally hollow in reference
                     ? 'bg-white border-2 border-[#006F4A] text-[#006F4A]'
