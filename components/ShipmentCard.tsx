@@ -63,19 +63,48 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
     if (!comment) return '';
     const c = comment.toLowerCase();
     const hasArabic = /[\u0600-\u06FF]/.test(comment);
-    const arabicPart = hasArabic ? comment.match(/[\u0600-\u06FF].+/)?.[0] : null;
+
+    // If already in Arabic, return as-is
+    if (hasArabic) return comment;
+
+    // Parcel creation patterns - e.g. "Parcel created by Squatwolf"
+    if (c.includes('parcel created') || c.includes('created by')) {
+      return t('commentParcelCreated');
+    }
+
+    // Parcel received at hub patterns
+    if (c.includes('parcel received at hub') || c.includes('received at hub')) {
+      return t('commentReceivedAtHub');
+    }
+
+    // Out for delivery patterns
+    if (c.includes('out for delivery')) {
+      return t('commentOutForDelivery');
+    }
+
+    // Successfully delivered patterns
+    if (c.includes('successfully delivered') || c === 'delivered') {
+      return t('commentDelivered');
+    }
+
+    // In transit patterns
+    if (c.includes('in transit') || c.includes('intransit')) {
+      return t('commentInTransit');
+    }
+
+    // Arrived at hub patterns
+    if (c.includes('arrived at') && c.includes('hub')) {
+      return t('commentArrivedAtHub');
+    }
 
     // Technical Pickup Mappings
     if (c.includes('out_for_pickup')) return t('statusOutForPickup');
     if (c.includes('not_picked_up')) return t('statusPickupFailed');
     if (c.includes('pickup_assigned')) return t('statusCourierAssigned');
-
-    if (c.includes('pickup_completed')) return t('statusPickupCompleted');
-    if (c.includes('inscan_at_hub')) return t('statusAtHub');
-    if (c.includes('intransit')) return t('statusInTransit');
+    if (c.includes('pickup_completed') || c.includes('pickup completed')) return t('statusPickupCompleted');
+    if (c.includes('inscan_at_hub') || c.includes('inscan at hub')) return t('statusAtHub');
     if (c.includes('reached') && c.includes('hub')) return t('statusArrivedHub');
     if (c.includes('lost')) return t('statusLost');
-    if (c.includes('delivered')) return t('statusDelivered');
     if (c.includes('accept')) return t('statusOutgoing');
     if (c.includes('rto')) return t('statusRTO');
 
@@ -88,21 +117,17 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
     if (c.includes('no response')) return t('statusNoResponse');
     if (c.includes('wrong city')) return t('statusWrongCity');
 
-    // If it's already a sentence or has Arabic and wasn't mapped above, keep it
-    if (comment.length > 25 || hasArabic) return comment;
-
     // Generic Location + Status Patterns
-    // e.g. "RIYADH arrived_in_country" -> "Arrived in Country - Riyadh"
     if (c.includes('arrived_in_country')) {
-      // Extract city if possible
       const city = comment.split(' ')[0];
       return t('statusArrivedCountry', { city: titleCase(city) });
     }
 
-    if (c.includes('cancelled')) {
+    if (c.includes('cancelled') || c.includes('canceled')) {
       return t('statusCancelled');
     }
 
+    // If nothing matched, return original
     return comment;
   };
 

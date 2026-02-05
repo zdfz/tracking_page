@@ -115,6 +115,14 @@ const translations: Record<Language, Record<string, string>> = {
     eventOnHold: 'On Hold',
     eventInscanAtHub: 'Received at Hub',
 
+    // Comment Translations (from API)
+    commentParcelCreated: 'Parcel created',
+    commentReceivedAtHub: 'Parcel received at hub',
+    commentOutForDelivery: 'Shipment out for delivery',
+    commentDelivered: 'Shipment successfully delivered',
+    commentInTransit: 'Parcel in transit to sorting center',
+    commentArrivedAtHub: 'Parcel arrived at hub',
+
     // Feedback Widget
     needHelp: 'Need Help ?',
 
@@ -282,6 +290,14 @@ const translations: Record<Language, Record<string, string>> = {
     eventRtoDelivered: 'تم تسليم المرتجع',
     eventOnHold: 'قيد الانتظار',
     eventInscanAtHub: 'تم الاستلام في المستودع',
+
+    // Comment Translations (from API)
+    commentParcelCreated: 'تم إنشاء الطرد',
+    commentReceivedAtHub: 'تم استلام الطرد في المستودع',
+    commentOutForDelivery: 'الشحنة خارجة للتسليم',
+    commentDelivered: 'تم تسليم الشحنة بنجاح',
+    commentInTransit: 'الطرد في الطريق إلى مركز الفرز',
+    commentArrivedAtHub: 'وصل الطرد إلى المستودع',
 
     // Feedback Widget
     needHelp: 'تحتاج مساعدة؟',
