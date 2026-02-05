@@ -459,7 +459,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                           <div className={isRTL ? 'text-right' : 'text-left'}>
                             <h5
                               dir={isRTL ? 'rtl' : 'ltr'}
-                              className={`text-base font-black uppercase tracking-tight ${isCanceled ? 'text-red-700' :
+                              className={`text-sm sm:text-base font-black uppercase tracking-tight ${isCanceled ? 'text-red-700' :
                                 isAttempted ? 'text-amber-700' :
                                   isOFD ? 'text-[#00A0AF]' :
                                     'text-gray-900'
