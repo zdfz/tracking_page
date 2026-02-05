@@ -28,6 +28,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
     // Created/Pickup patterns
     if (name === 'created' || name.includes('create')) return t('eventCreated');
     if (name === 'pickup completed' || name === 'pickup_completed' || name.includes('pickup complete')) return t('eventPickupCompleted');
+    if (name === 'pickup assigned' || name === 'pickup_assigned' || name.includes('pickup assigned')) return t('eventPickupAssigned');
     if (name === 'pickup scheduled' || name === 'pickup_scheduled') return t('eventPickupScheduled');
     if (name === 'pickup awaited' || name === 'pickup_awaited') return t('eventPickupAwaited');
 
