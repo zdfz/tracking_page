@@ -8,7 +8,7 @@ interface ShipmentCardProps {
 }
 
 const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, language } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const getVal = (obj: any, key: string) => {
@@ -237,7 +237,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
             <div className={`flex flex-col ${isRTL ? 'items-end' : 'items-start'}`}>
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t('deliveredTime')}</span>
               <span className="text-[13px] font-semibold text-gray-900 leading-tight">
-                {shipment.timeline?.delivered_time ? formatShortDate(shipment.timeline.delivered_time) : t('pending')}
+                {shipment.timeline?.delivered_time ? formatShortDate(shipment.timeline.delivered_time, language) : t('pending')}
               </span>
             </div>
           )}
@@ -247,7 +247,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
             <div className={`hidden sm:flex flex-col ${isRTL ? 'border-r pr-8' : 'border-l pl-8'} border-gray-200`}>
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{t('arrivingBy')}</span>
               <span className="text-[13px] font-semibold text-[#006F4A] leading-tight">
-                {formatShortDate(shipment.estimated_delivery_date)}
+                {formatShortDate(shipment.estimated_delivery_date, language)}
               </span>
             </div>
           )}
@@ -339,13 +339,14 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                         <span className="text-[9px] font-medium text-gray-300 whitespace-nowrap uppercase tracking-tighter">
                           {formatShortDate(
                             shipment.history?.find(h => h.event_name.toLowerCase().includes('create'))?.event_date ||
-                            shipment.history?.[0]?.event_date || ''
+                            shipment.history?.[0]?.event_date || '',
+                            language
                           )}
                         </span>
                       )}
                       {stage.key === 'Delivered' && shipment.timeline?.delivered_time && (
                         <span className="text-[9px] font-medium text-[#006F4A] whitespace-nowrap uppercase tracking-tighter">
-                          {formatShortDate(shipment.timeline.delivered_time)}
+                          {formatShortDate(shipment.timeline.delivered_time, language)}
                         </span>
                       )}
                     </div>
@@ -468,8 +469,8 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
                                 }`}>{translateEventName(ev.event_name)}</h5>
                           </div>
                           <div className={`${isRTL ? 'text-left' : 'text-right'} whitespace-nowrap`}>
-                            <span className="text-xs font-black text-gray-900 block">{formatShipmentDate(ev.event_date).split(' ').slice(0, 2).join(' ')}</span>
-                            <span className="text-[11px] font-bold text-gray-400 uppercase">{formatShipmentDate(ev.event_date).split(' ').slice(2).join(' ')}</span>
+                            <span className="text-xs font-black text-gray-900 block">{formatShipmentDate(ev.event_date, language).split(' ').slice(0, 2).join(' ')}</span>
+                            <span className="text-[11px] font-bold text-gray-400 uppercase">{formatShipmentDate(ev.event_date, language).split(' ').slice(2).join(' ')}</span>
                           </div>
                         </div>
                         <div className={`mt-1.5 py-2 px-3 rounded-lg transition-colors ${isRTL ? 'text-right' : 'text-left'} ${isCanceled ? 'bg-red-50 group-hover:bg-red-100' : 'bg-gray-50 group-hover:bg-gray-100'}`}>
@@ -495,7 +496,7 @@ const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment }) => {
 };
 
 // Helper components/functions for dynamic stage mapping
-const formatShortDate = (dateStr?: string) => {
+const formatShortDate = (dateStr?: string, lang: 'en' | 'ar' = 'en') => {
   if (!dateStr) return '---';
   try {
     const parts = dateStr.trim().split(/\s+/);
@@ -504,25 +505,43 @@ const formatShortDate = (dateStr?: string) => {
     const timePart = parts[1];
 
     const [year, month, day] = datePart.split('-');
-    const [hoursStr, minutes] = timePart.split(':');
+    const [hoursStr, minutesStr] = timePart.split(':');
 
-    let hours = parseInt(hoursStr, 10);
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
+    // Create date object and add 3 hours
+    const date = new Date(
+      parseInt(year),
+      parseInt(month) - 1,
+      parseInt(day),
+      parseInt(hoursStr),
+      parseInt(minutesStr)
+    );
+    date.setHours(date.getHours() + 3);
 
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const monthIndex = parseInt(month, 10) - 1;
-    const shortMonth = monthNames[monthIndex] || month;
+    const dDay = date.getDate();
+    const dMonth = date.getMonth();
+    let dHours = date.getHours();
+    const dMinutes = date.getMinutes().toString().padStart(2, '0');
 
-    return `${day} ${shortMonth} ${hours}:${minutes} ${ampm}`;
+    const ampm = dHours >= 12
+      ? (lang === 'ar' ? 'مساءً' : 'PM')
+      : (lang === 'ar' ? 'صباحاً' : 'AM');
+
+    dHours = dHours % 12;
+    dHours = dHours ? dHours : 12;
+
+    const enMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const arMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+
+    const monthName = lang === 'ar' ? arMonths[dMonth] : enMonths[dMonth];
+
+    return `${String(dDay).padStart(2, '0')} ${monthName} ${dHours}:${dMinutes} ${ampm}`;
   } catch (e) {
     return dateStr;
   }
 };
 
-const formatShipmentDate = (dateStr?: string) => {
-  return formatShortDate(dateStr);
+const formatShipmentDate = (dateStr?: string, lang: 'en' | 'ar' = 'en') => {
+  return formatShortDate(dateStr, lang);
 };
 
 const isStageCompleted = (stage: string, status: string, idx: number) => {
