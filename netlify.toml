@@ -1,0 +1,16 @@
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    # Basic Content Security Policy (allows inline styles for tailwind and images)
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://esm.sh; style-src 'self' 'unsafe-inline'; connect-src 'self' https://starlinksapi.app; img-src 'self' data: https:; font-src 'self' data:;"
+
+# React Router / Client side routing support
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

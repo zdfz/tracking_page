@@ -37,16 +37,23 @@ export function extractTimeline(historyEvents: HistoryEvent[]): Timeline {
 
 export async function fetchShipmentHistory(trackNumber: string): Promise<HistoryEvent[]> {
   try {
-    const url = `${API_HISTORY_URL}?api_key=${API_KEY}&tracking_number=${encodeURIComponent(trackNumber)}`;
-    const response = await axios.get(url, { timeout: REQUEST_TIMEOUT });
+    const response = await axios.get(API_HISTORY_URL, {
+      params: { 
+        api_key: API_KEY, // Note: This API seems to require api_key in query, but params avoids manual URL construction issues
+        tracking_number: trackNumber 
+      },
+      timeout: REQUEST_TIMEOUT 
+    });
     const data = response.data;
     // The API returns an object where the key is the tracking number
     if (data && data[trackNumber] && Array.isArray(data[trackNumber])) {
       return data[trackNumber];
     }
     return [];
-  } catch (err) {
-    console.error(`History API failed for ${trackNumber}:`, err);
+  } catch (err: any) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('History API failed:', err?.message || 'Unknown Error');
+    }
     return [];
   }
 }

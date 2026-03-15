@@ -76,8 +76,16 @@ const AppContent: React.FC = () => {
     const params = new URLSearchParams(window.location.search);
     const shipmentParam = params.get('shipment');
     if (shipmentParam) {
-      setTrackingNumber(shipmentParam);
-      handleSearch(undefined, shipmentParam);
+      // Basic sanitization: allow only alphanumeric characters, cap to 25 chars max
+      const sanitized = shipmentParam.replace(/[^a-zA-Z0-9]/g, '').substring(0, 25);
+      
+      // Enforce the tracking number format if applicable
+      if (/^S\d{8,12}$/i.test(sanitized)) {
+        setTrackingNumber(sanitized);
+        handleSearch(undefined, sanitized);
+      } else {
+        setError(t('errorInvalidFormat', { trackingNumber: sanitized }) || 'Invalid tracking number format.');
+      }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
