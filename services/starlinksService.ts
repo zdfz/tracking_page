@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import { API_BASE_URL, API_HISTORY_URL, API_KEY, REQUEST_TIMEOUT, MAX_RETRIES } from '../constants';
+import { API_BASE_URL, API_HISTORY_URL, REQUEST_TIMEOUT, MAX_RETRIES } from '../constants';
 import { APIResult, HistoryEvent, Timeline } from '../types';
 
 
@@ -39,7 +39,6 @@ export async function fetchShipmentHistory(trackNumber: string): Promise<History
   try {
     const response = await axios.get(API_HISTORY_URL, {
       params: { 
-        api_key: API_KEY, // Note: This API seems to require api_key in query, but params avoids manual URL construction issues
         tracking_number: trackNumber 
       },
       timeout: REQUEST_TIMEOUT 
@@ -63,7 +62,6 @@ export async function queryStarlinksAPI(searchValue: string, retryCount = 0): Pr
     const response = await axios.get(API_BASE_URL, {
       params: { search_value: searchValue, include_completed: true },
       headers: {
-        Authorization: `Bearer ${API_KEY}`,
         'Content-Type': 'application/json'
       },
       timeout: REQUEST_TIMEOUT

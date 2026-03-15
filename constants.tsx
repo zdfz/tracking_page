@@ -1,7 +1,6 @@
 
-export const API_BASE_URL = 'https://starlinksapi.app/api/v1/shipments/get-list';
-export const API_HISTORY_URL = 'https://starlinksapi.app/api/v1/shipment/history';
-export const API_KEY = import.meta.env.VITE_API_KEY || ''; // Read from environment variables
+export const API_BASE_URL = '/api/get-list';
+export const API_HISTORY_URL = '/api/history';
 export const REQUEST_TIMEOUT = 10000;
 export const MAX_RETRIES = 3;
 
