@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { queryStarlinksAPI, fetchShipmentHistory, extractTimeline } from './services/starlinksService';
 import { Shipment } from './types';
 import ShipmentCard from './components/ShipmentCard';
@@ -14,13 +14,13 @@ const AppContent: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchedNumber, setSearchedNumber] = useState<string | null>(null);
 
-  const handleSearch = useCallback(async (e?: React.FormEvent) => {
+  const handleSearch = useCallback(async (e?: React.FormEvent, overrideValue?: string) => {
     if (e) e.preventDefault();
 
     setError(null);
     setShipments([]);
 
-    const trimmedInput = trackingNumber.trim();
+    const trimmedInput = (overrideValue || trackingNumber).trim();
     if (!trimmedInput) {
       setError(t('errorEmpty'));
       return;
@@ -70,6 +70,16 @@ const AppContent: React.FC = () => {
       setIsLoading(false);
     }
   }, [trackingNumber, t]);
+
+  // Auto-search if ?shipment= parameter is in the URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shipmentParam = params.get('shipment');
+    if (shipmentParam) {
+      setTrackingNumber(shipmentParam);
+      handleSearch(undefined, shipmentParam);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="min-h-screen bg-white relative">
