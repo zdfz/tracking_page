@@ -19,7 +19,13 @@ export const handler = async (event) => {
 
   try {
     const response = await fetch(url.toString());
-    const data = await response.text();
+    let rawData = await response.json();
+
+    // The History API returns an object where the key is the tracking number and the value is the array of events
+    // Example: { "S0005747286": [{ event_name: "Delivered", event_location: "Riyadh" }] }
+    
+    // We will just pass it through, as event history typically doesn't contain PII (names, phone numbers).
+    // If we wanted to mask locations, we could do it here, but event locations are usually public hub names.
 
     return {
       statusCode: response.status,
@@ -27,7 +33,7 @@ export const handler = async (event) => {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
       },
-      body: data
+      body: JSON.stringify(rawData)
     };
   } catch (error) {
     console.error("Fetch error:", error);

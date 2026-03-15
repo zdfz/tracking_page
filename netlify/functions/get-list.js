@@ -25,7 +25,62 @@ export const handler = async (event) => {
       }
     });
 
-    const data = await response.text();
+    let rawData = await response.json();
+
+    // Helper function to mask PII
+    const maskString = (str, type = 'name') => {
+      if (!str) return '---';
+      if (type === 'phone') {
+        if (str.length < 8) return '******';
+        return str.substring(0, 7) + '******' + str.substring(str.length - 2);
+      }
+      if (type === 'name') {
+        return str.split(' ').map(part => {
+          if (part.length < 2) return part;
+          return part[0] + '***';
+        }).join(' ');
+      }
+      if (type === 'address') {
+        if (str.length < 10) return str;
+        return str.substring(0, 5) + '******';
+      }
+      if (type === 'email') {
+        const [username, domain] = str.split('@');
+        if (!domain) return '******';
+        return username.charAt(0) + '****@' + domain;
+      }
+      return str;
+    };
+
+    // Mask the payload
+    if (Array.isArray(rawData)) {
+      rawData = rawData.map(shipment => {
+        // Mask main customer name
+        if (shipment.customer_name) {
+          shipment.customer_name = maskString(shipment.customer_name, 'name');
+        }
+
+        // Mask Consignee Address object
+        if (shipment.consignee_address) {
+          if (shipment.consignee_address.name) shipment.consignee_address.name = maskString(shipment.consignee_address.name, 'name');
+          if (shipment.consignee_address.phone) shipment.consignee_address.phone = maskString(shipment.consignee_address.phone, 'phone');
+          if (shipment.consignee_address.email) shipment.consignee_address.email = maskString(shipment.consignee_address.email, 'email');
+          if (shipment.consignee_address.address1) shipment.consignee_address.address1 = maskString(shipment.consignee_address.address1, 'address');
+          if (shipment.consignee_address.address2) shipment.consignee_address.address2 = maskString(shipment.consignee_address.address2, 'address');
+        }
+
+        // Mask Shipper Address object
+        if (shipment.shipper_address) {
+          if (shipment.shipper_address.name) shipment.shipper_address.name = maskString(shipment.shipper_address.name, 'name');
+          if (shipment.shipper_address.phone) shipment.shipper_address.phone = maskString(shipment.shipper_address.phone, 'phone');
+          if (shipment.shipper_address.email) shipment.shipper_address.email = maskString(shipment.shipper_address.email, 'email');
+          if (shipment.shipper_address.address1) shipment.shipper_address.address1 = maskString(shipment.shipper_address.address1, 'address');
+          if (shipment.shipper_address.address2) shipment.shipper_address.address2 = maskString(shipment.shipper_address.address2, 'address');
+        }
+
+        return shipment;
+      });
+    }
 
     return {
       statusCode: response.status,
@@ -33,7 +88,7 @@ export const handler = async (event) => {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*' // Or restrict to your Netlify domain
       },
-      body: data
+      body: JSON.stringify(rawData)
     };
   } catch (error) {
     console.error("Fetch error:", error);
